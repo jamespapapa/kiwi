@@ -9,7 +9,6 @@ export interface BackgroundTask {
   sessionID?: string
   parentSessionID: string
   description: string
-  prompt: string
   status: TaskStatus
   startedAt?: Date
   completedAt?: Date
@@ -25,7 +24,6 @@ export interface LaunchInput {
   description: string
   prompt: string
   parentSessionID: string
-  parentMessageID: string
   system?: string
   tools?: Record<string, boolean>
 }

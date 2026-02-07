@@ -216,7 +216,6 @@ export class SessionManager {
       id,
       parentSessionID: input.parentSessionID,
       description: input.description,
-      prompt: input.prompt,
       status: "pending",
     }
     this.tasks.set(id, task)

@@ -51,7 +51,6 @@ export function createExploreFilesTool(manager: SessionManager) {
           description: `explore: ${pathList.slice(0, 3).join(", ")}`,
           prompt,
           parentSessionID: context.sessionID,
-          parentMessageID: context.messageID,
         })
 
         if (task.status === "error") {
@@ -73,7 +72,7 @@ export function createBackgroundTaskTool(manager: SessionManager) {
   return tool({
     description:
       "Launch a background sub-agent task. Returns immediately with a task ID. " +
-      "The system will notify you when the task completes.",
+      "Check status later with background_result.",
     args: {
       prompt: z
         .string()
@@ -88,7 +87,6 @@ export function createBackgroundTaskTool(manager: SessionManager) {
           description: args.description,
           prompt: args.prompt,
           parentSessionID: context.sessionID,
-          parentMessageID: context.messageID,
         })
 
         if (task.status === "error") {
@@ -142,7 +140,7 @@ export function createBackgroundResultTool(manager: SessionManager) {
         if (task.result) {
           lines.push(``, `--- Result ---`, task.result)
         } else if (task.status === "running" || task.status === "pending") {
-          lines.push(``, `Task is still ${task.status}. Wait for the completion notification.`)
+          lines.push(``, `Task is still ${task.status}. Check again in 10-20 seconds.`)
         }
 
         return lines.join("\n")
