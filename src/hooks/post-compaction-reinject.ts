@@ -8,6 +8,7 @@
  */
 
 import { getToolGuide } from "../prompt/tool-guide.js"
+import type { SessionManager } from "../orchestration/session-manager.js"
 
 interface CompactingInput {
   sessionID: string
@@ -21,7 +22,8 @@ interface CompactingOutput {
 export function createPostCompactionReinject() {
   const compactingHook = async (
     _input: CompactingInput,
-    output: CompactingOutput
+    output: CompactingOutput,
+    manager?: SessionManager
   ): Promise<void> => {
     try {
       if (!Array.isArray(output.context)) return
@@ -31,6 +33,14 @@ export function createPostCompactionReinject() {
 
       // Add structured work-state preservation instructions
       output.context.push(getWorkStatePreservationPrompt())
+
+      // Preserve running background task state across compaction
+      if (manager) {
+        const taskSummary = manager.getRunningTasksSummary()
+        if (taskSummary) {
+          output.context.push(taskSummary)
+        }
+      }
     } catch {
       // Graceful degradation: compaction must not fail
     }

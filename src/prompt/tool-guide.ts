@@ -7,6 +7,7 @@
  *
  * Available tools (from OpenCode runtime):
  *   bash, read, glob, grep, edit, write, task, webfetch, todowrite, question, skill
+ *   explore_files, background_task, background_result, background_cancel (Kiwi plugin)
  */
 
 export function getToolGuide(): string {
@@ -75,10 +76,31 @@ You have access to tools via function calling. You MUST call tools using the pro
 - Parameters: skill (required string)
 - Use to invoke registered skills by name.
 
+### explore_files — Explore files and get a summary
+- Parameters: paths (required, comma-separated file paths or directories), instruction (required)
+- Blocks until exploration is done. Use for understanding code before making changes.
+- The result is a concise summary with file paths and line numbers.
+- Example: paths="src/hooks,src/index.ts", instruction="Find where tool output is truncated"
+
+### background_task — Run a task in background
+- Parameters: prompt (required, detailed instruction), description (required, short label)
+- Returns task_id immediately. The system notifies you on completion.
+- Do NOT poll — wait for the notification. Then use background_result to get the result.
+
+### background_result — Get background task result
+- Parameters: task_id (required, the ID returned by background_task)
+- Use AFTER receiving a completion notification.
+
+### background_cancel — Cancel a background task
+- Parameters: task_id (required)
+- Cancels a running background task and frees the slot.
+
 ### General Rules
 1. One tool call at a time. Wait for the result before making the next call.
 2. If a tool call fails, read the error message carefully. Fix the issue and retry once.
 3. After two consecutive failures on the same tool, stop and explain the problem in text.
 4. Prefer specific, narrow operations over broad ones. Read 50 lines, not 2000. Search one directory, not the whole project.
-5. Always verify your changes: after edit, read the modified section to confirm correctness.`
+5. Always verify your changes: after edit, read the modified section to confirm correctness.
+6. Use explore_files for multi-file exploration instead of reading files one by one. It saves context.
+7. Use background_task for independent subtasks that can run in parallel.`
 }
