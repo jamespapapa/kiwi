@@ -94,13 +94,15 @@ export function createBackgroundTaskTool(manager: SessionManager) {
         }
 
         return [
-          `Task launched successfully.`,
-          `  ID: ${task.id}`,
-          `  Status: ${task.status}`,
-          `  Description: ${task.description}`,
+          `[BACKGROUND_TASK LAUNCHED]`,
+          `task_id: ${task.id}`,
+          `status: running`,
+          `description: ${task.description}`,
           ``,
-          `The task is running in the background. Continue your current work.`,
-          `After 10-30 seconds, use background_result with task_id="${task.id}" to check.`,
+          `Next steps:`,
+          `1. Continue your current work (respond to user, edit files, etc.)`,
+          `2. After 10-30 seconds, call background_result with task_id="${task.id}"`,
+          `3. If still running, wait 10-20 more seconds and check again`,
         ].join("\n")
       } catch (err) {
         return `[ERROR] ${err instanceof Error ? err.message : String(err)}`
@@ -122,28 +124,40 @@ export function createBackgroundResultTool(manager: SessionManager) {
           return `[ERROR] Task not found: ${args.task_id}`
         }
 
-        const lines = [
-          `Task: ${task.id}`,
-          `Status: ${task.status}`,
-          `Description: ${task.description}`,
-        ]
-
-        if (task.startedAt) {
-          lines.push(`Started: ${task.startedAt.toISOString()}`)
-        }
-        if (task.completedAt) {
-          lines.push(`Completed: ${task.completedAt.toISOString()}`)
-        }
-        if (task.error) {
-          lines.push(`Error: ${task.error}`)
-        }
-        if (task.result) {
-          lines.push(``, `--- Result ---`, task.result)
-        } else if (task.status === "running" || task.status === "pending") {
-          lines.push(``, `Task is still ${task.status}. Check again in 10-20 seconds.`)
+        if (task.status === "completed") {
+          return [
+            `[BACKGROUND_TASK COMPLETED]`,
+            `task_id: ${task.id}`,
+            `description: ${task.description}`,
+            ``,
+            `--- Result ---`,
+            task.result ?? "(no output)",
+          ].join("\n")
         }
 
-        return lines.join("\n")
+        if (task.status === "running" || task.status === "pending") {
+          return [
+            `[BACKGROUND_TASK STILL RUNNING]`,
+            `task_id: ${task.id}`,
+            `description: ${task.description}`,
+            ``,
+            `The task is not finished yet. Wait 10-20 seconds, then call background_result again with task_id="${task.id}".`,
+          ].join("\n")
+        }
+
+        if (task.status === "error") {
+          return [
+            `[BACKGROUND_TASK ERROR]`,
+            `task_id: ${task.id}`,
+            `error: ${task.error ?? "unknown"}`,
+          ].join("\n")
+        }
+
+        // cancelled
+        return [
+          `[BACKGROUND_TASK CANCELLED]`,
+          `task_id: ${task.id}`,
+        ].join("\n")
       } catch (err) {
         return `[ERROR] ${err instanceof Error ? err.message : String(err)}`
       }

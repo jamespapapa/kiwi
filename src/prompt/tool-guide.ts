@@ -88,11 +88,6 @@ You have access to tools via function calling. You MUST call tools using the pro
 - Example: pattern="*.ts", path="src/hooks"
 - Do NOT pass "undefined" or "null" as path. Omit it to use current directory.
 
-### task — Delegate work to a subagent
-- Parameters: description (required string), prompt (required string)
-- Use for complex, independent subtasks that can run in parallel.
-- Provide a clear, self-contained prompt — the subagent has no access to your conversation context.
-
 ### todowrite — Update the task list
 - Parameters: todos (required, array of todo objects)
 - Use to track multi-step tasks.
@@ -100,7 +95,6 @@ You have access to tools via function calling. You MUST call tools using the pro
 ### question — Ask the user a question
 - Parameters: question (required string)
 - Use when you need clarification, confirmation, or user input to proceed.
-- Prefer this tool over plain text when a clear answer is needed before continuing work.
 
 ### webfetch — Fetch web content
 - Parameters: url (required), format (optional: "text", "markdown", "html"), timeout (optional seconds)
@@ -109,23 +103,40 @@ You have access to tools via function calling. You MUST call tools using the pro
 - Parameters: skill (required string)
 - Use to invoke registered skills by name.
 
-### explore_files — Explore files and get a summary
+## Delegation Tools (IMPORTANT — read carefully)
+
+When you need to analyze files or run a subtask, choose ONE of these:
+
+| Situation | Tool to use |
+|-----------|------------|
+| Understand code before editing | explore_files |
+| Run work in parallel while you do other things | background_task |
+| Neither fits | Use read/grep/glob directly |
+
+Do NOT use the "task" tool. Always use explore_files or background_task instead. They are specifically designed to save context and work better.
+
+### explore_files — Analyze files (BLOCKING)
 - Parameters: paths (required, comma-separated file paths or directories), instruction (required)
-- Blocks until exploration is done. Use for understanding code before making changes.
+- This tool BLOCKS — it waits until analysis is done, then returns a summary.
+- Use when you need the result BEFORE continuing (e.g., understanding code before editing).
 - The result is a concise summary with file paths and line numbers.
 - Example: paths="src/hooks,src/index.ts", instruction="Find where tool output is truncated"
 
-### background_task — Run a task in background
+### background_task — Run work in background (NON-BLOCKING)
 - Parameters: prompt (required, detailed instruction), description (required, short label)
-- Returns task_id immediately. Continue your current work while it runs.
-- After 10-30 seconds, use background_result to check status and get the result.
-- IMPORTANT: The sub-agent can ONLY use read, grep, glob, bash. Write your prompt using these tools directly.
+- This tool returns a task_id IMMEDIATELY. You continue your work while it runs.
+- Step 1: Call background_task → receive task_id (e.g., "kiwi-1")
+- Step 2: Continue doing other work (respond to user, edit files, etc.)
+- Step 3: After 10-30 seconds, call background_result with the task_id to get results
+- If background_result says "still running", wait 10-20 more seconds and check again.
+- IMPORTANT: The sub-agent can ONLY use read, grep, glob, bash.
 - BAD prompt: "Use explore_files to analyze the project" (sub-agent cannot use explore_files)
 - GOOD prompt: "Read the files in src/hooks/ and summarize how tool output is truncated"
 
-### background_result — Get background task result
-- Parameters: task_id (required, the ID returned by background_task)
-- Use after launching a background task to check status or retrieve the result.
+### background_result — Check background task status
+- Parameters: task_id (required, the ID returned by background_task, e.g., "kiwi-1")
+- Returns the task status and result if completed.
+- If status is "running", wait and call again later.
 
 ### background_cancel — Cancel a background task
 - Parameters: task_id (required)
@@ -137,6 +148,5 @@ You have access to tools via function calling. You MUST call tools using the pro
 3. After two consecutive failures on the same tool, stop and explain the problem in text.
 4. Prefer specific, narrow operations over broad ones. Read 50 lines, not 2000. Search one directory, not the whole project.
 5. Always verify your changes: after edit, read the modified section to confirm correctness.
-6. explore_files BLOCKS until done — use it when you need results before proceeding.
-7. For parallel work, use background_task. It returns immediately so you can continue working.`
+6. For file analysis, use explore_files (blocking) or background_task (parallel). Do NOT use the "task" tool.`
 }
