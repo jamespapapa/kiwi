@@ -30,17 +30,34 @@ import {
 
 type Client = ReturnType<typeof createOpencodeClient>
 
-/** Tools allowed for read-only sub-agents */
+/**
+ * Comprehensive tool allow/deny list for read-only sub-agents.
+ * Explicitly deny all write, interactive, network, and recursive tools.
+ */
 const SUB_AGENT_TOOLS: Record<string, boolean> = {
+  // Allow: read-only exploration
   read: true,
   grep: true,
   glob: true,
   bash: true,
+  // Deny: write operations
   write: false,
   edit: false,
+  apply_patch: false,
+  multiedit: false,
+  // Deny: task/interactive
   task: false,
   question: false,
-  // Block recursive delegation
+  batch: false,
+  skill: false,
+  todowrite: false,
+  // Deny: network
+  webfetch: false,
+  websearch: false,
+  // Deny: misc
+  codesearch: false,
+  lsp: false,
+  // Deny: recursive delegation
   explore_files: false,
   background_task: false,
   background_result: false,
@@ -50,15 +67,23 @@ const SUB_AGENT_TOOLS: Record<string, boolean> = {
 /** Stable-poll threshold: complete after N consecutive unchanged polls */
 const STABLE_POLL_THRESHOLD = 3
 
+/** Minimum time a task must run before allowing completion (prevents premature session.idle) */
+const MIN_RUNTIME_MS = 5_000
+
+/** Max completed/errored/cancelled tasks to keep in memory */
+const MAX_COMPLETED_TASKS = 50
+
 let taskCounter = 0
 
 export class SessionManager {
   private tasks = new Map<string, BackgroundTask>()
+  private completing = new Set<string>()
   private concurrency: ConcurrencyLimiter
   private config: OrchestrationConfig
   private pollTimer: unknown
   private client: Client
   private directory: string
+  private cleanupRegistered = false
 
   constructor(client: Client, directory: string, config?: Partial<OrchestrationConfig>) {
     this.client = client
@@ -127,6 +152,11 @@ export class SessionManager {
     const task = this.findBySessionID(sessionID)
     if (!task || task.status !== "running") return
 
+    // Enforce minimum runtime to avoid premature completion
+    if (task.startedAt && Date.now() - task.startedAt.getTime() < MIN_RUNTIME_MS) {
+      return
+    }
+
     // Defer completion slightly to let final messages settle
     setTimeout(() => {
       this.tryComplete(task).catch(() => {})
@@ -148,6 +178,7 @@ export class SessionManager {
 
     task.status = "cancelled"
     task.completedAt = new Date()
+    this.completing.delete(task.id)
 
     if (task.sessionID) {
       try {
@@ -189,6 +220,7 @@ export class SessionManager {
       status: "pending",
     }
     this.tasks.set(id, task)
+    this.evictCompletedTasks()
     return task
   }
 
@@ -225,12 +257,29 @@ export class SessionManager {
 
   // ── Internal: completion ─────────────────────────────────────────
 
+  /**
+   * Attempt to complete a task. Uses a Set-based guard to prevent
+   * concurrent completion from event + polling racing.
+   */
   private async tryComplete(task: BackgroundTask): Promise<void> {
+    // Atomic guard: only one completion attempt at a time per task
     if (task.status !== "running") return
     if (!task.sessionID) return
+    if (this.completing.has(task.id)) return
+    this.completing.add(task.id)
 
     try {
       const result = await this.extractResult(task.sessionID)
+
+      // Validate: if no output and task ran briefly, defer completion
+      if (result === "(no output)" && task.startedAt) {
+        const elapsed = Date.now() - task.startedAt.getTime()
+        if (elapsed < MIN_RUNTIME_MS * 2) {
+          // Likely premature session.idle — let polling retry later
+          return
+        }
+      }
+
       task.status = "completed"
       task.completedAt = new Date()
       task.result = result
@@ -239,7 +288,11 @@ export class SessionManager {
       task.completedAt = new Date()
       task.error = err instanceof Error ? err.message : String(err)
     } finally {
-      this.concurrency.release()
+      this.completing.delete(task.id)
+      // Only release concurrency slot when task actually reached a terminal state
+      if (task.status === "completed" || task.status === "error") {
+        this.concurrency.release()
+      }
     }
   }
 
@@ -330,6 +383,11 @@ export class SessionManager {
       }
     }
 
+    // Enforce minimum runtime before allowing completion
+    if (task.startedAt && Date.now() - task.startedAt.getTime() < MIN_RUNTIME_MS) {
+      return
+    }
+
     // Check session status if available
     if (statuses) {
       const status = statuses[task.sessionID]
@@ -339,11 +397,11 @@ export class SessionManager {
       }
     }
 
-    // Stability detection via message count
+    // Stability detection via message count (no limit param — count all messages)
     try {
       const res = await this.client.session.messages({
         path: { id: task.sessionID },
-        query: { directory: this.directory, limit: 1 },
+        query: { directory: this.directory },
       } as any)
       const data = (res as any).data ?? res
       const msgCount = Array.isArray(data) ? data.length : 0
@@ -363,7 +421,23 @@ export class SessionManager {
     }
   }
 
-  // ── Internal: utility ────────────────────────────────────────────
+  // ── Internal: cleanup & maintenance ────────────────────────────
+
+  /** Evict oldest completed tasks when the map grows too large */
+  private evictCompletedTasks(): void {
+    const completed = [...this.tasks.entries()]
+      .filter(([, t]) => t.status === "completed" || t.status === "error" || t.status === "cancelled")
+      .sort((a, b) => {
+        const ta = a[1].completedAt?.getTime() ?? 0
+        const tb = b[1].completedAt?.getTime() ?? 0
+        return ta - tb // oldest first
+      })
+
+    while (completed.length > MAX_COMPLETED_TASKS) {
+      const [id] = completed.shift()!
+      this.tasks.delete(id)
+    }
+  }
 
   private findBySessionID(sessionID: string): BackgroundTask | undefined {
     for (const task of this.tasks.values()) {
@@ -373,6 +447,9 @@ export class SessionManager {
   }
 
   private registerCleanup(): void {
+    if (this.cleanupRegistered) return
+    this.cleanupRegistered = true
+
     const cleanup = () => {
       if (this.pollTimer) {
         clearInterval(this.pollTimer)

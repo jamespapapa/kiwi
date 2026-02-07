@@ -101,8 +101,8 @@ export function createBackgroundTaskTool(manager: SessionManager) {
           `  Status: ${task.status}`,
           `  Description: ${task.description}`,
           ``,
-          `Do NOT poll for results. Wait for the system notification.`,
-          `When notified, use background_result with task_id="${task.id}" to get the result.`,
+          `The task is running in the background. Continue your current work.`,
+          `After 10-30 seconds, use background_result with task_id="${task.id}" to check.`,
         ].join("\n")
       } catch (err) {
         return `[ERROR] ${err instanceof Error ? err.message : String(err)}`

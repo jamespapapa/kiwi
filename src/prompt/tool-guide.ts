@@ -84,12 +84,12 @@ You have access to tools via function calling. You MUST call tools using the pro
 
 ### background_task — Run a task in background
 - Parameters: prompt (required, detailed instruction), description (required, short label)
-- Returns task_id immediately. The system notifies you on completion.
-- Do NOT poll — wait for the notification. Then use background_result to get the result.
+- Returns task_id immediately. Continue your current work while it runs.
+- After 10-30 seconds, use background_result to check status and get the result.
 
 ### background_result — Get background task result
 - Parameters: task_id (required, the ID returned by background_task)
-- Use AFTER receiving a completion notification.
+- Use after launching a background task to check status or retrieve the result.
 
 ### background_cancel — Cancel a background task
 - Parameters: task_id (required)
