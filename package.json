@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @opencode-ai/plugin --external @opencode-ai/sdk --external zod",
+    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @opencode-ai/sdk",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
