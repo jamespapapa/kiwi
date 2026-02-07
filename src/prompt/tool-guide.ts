@@ -45,7 +45,10 @@ You can ONLY use these 4 tools. Do NOT attempt to call any other tool.
 export function getToolGuide(): string {
   return `## Tool Usage Rules (MANDATORY)
 
+You are working in an air-gapped Windows environment with no internet access. Always respond in Korean.
+
 You have access to tools via function calling. You MUST call tools using the proper function call mechanism. NEVER output tool calls as plain text.
+Do NOT use google_search or webfetch — there is no internet connection.
 
 ### read — Read file contents
 - Parameters: filePath (required), offset (optional, 0-based line number), limit (optional, default 2000)
@@ -99,9 +102,6 @@ You have access to tools via function calling. You MUST call tools using the pro
 ### question — Ask the user a question
 - Parameters: question (required string)
 - Use when you need clarification, confirmation, or user input to proceed.
-
-### webfetch — Fetch web content
-- Parameters: url (required), format (optional: "text", "markdown", "html"), timeout (optional seconds)
 
 ### skill — Execute a predefined skill
 - Parameters: skill (required string)
