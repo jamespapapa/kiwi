@@ -10,6 +10,39 @@
  *   explore_files, background_task, background_result, background_cancel (Kiwi plugin)
  */
 
+/**
+ * Reduced tool guide for sub-agent sessions.
+ * Only covers the 4 tools sub-agents can actually use.
+ * Saves ~600 tokens vs the full guide.
+ */
+export function getSubAgentToolGuide(): string {
+  return `## Tool Usage Rules (Sub-Agent)
+
+You MUST call tools using the proper function call mechanism. NEVER output tool calls as plain text.
+You can ONLY use these 4 tools. Do NOT attempt to call any other tool.
+
+### read — Read file contents
+- Parameters: filePath (required), offset (optional), limit (optional)
+- Use offset and limit for large files. Read only the lines you need.
+
+### grep — Search file contents with regex
+- Parameters: pattern (required regex), path (optional directory), include (optional file glob)
+- Always specify path and include to limit scope.
+
+### glob — Find files by name pattern
+- Parameters: pattern (required glob), path (optional directory)
+
+### bash — Execute read-only shell commands
+- Parameters: command (required), description (required)
+- ONLY for read-only commands: ls, wc, find, cat, head, tail.
+- NEVER run destructive or write commands.
+
+### Rules
+1. One tool call at a time. Wait for the result before the next call.
+2. Prefer narrow operations. Read 50 lines, not 2000.
+3. Return a concise structured summary with file paths and line numbers.`
+}
+
 export function getToolGuide(): string {
   return `## Tool Usage Rules (MANDATORY)
 
@@ -86,6 +119,9 @@ You have access to tools via function calling. You MUST call tools using the pro
 - Parameters: prompt (required, detailed instruction), description (required, short label)
 - Returns task_id immediately. Continue your current work while it runs.
 - After 10-30 seconds, use background_result to check status and get the result.
+- IMPORTANT: The sub-agent can ONLY use read, grep, glob, bash. Write your prompt using these tools directly.
+- BAD prompt: "Use explore_files to analyze the project" (sub-agent cannot use explore_files)
+- GOOD prompt: "Read the files in src/hooks/ and summarize how tool output is truncated"
 
 ### background_result — Get background task result
 - Parameters: task_id (required, the ID returned by background_task)
@@ -101,6 +137,6 @@ You have access to tools via function calling. You MUST call tools using the pro
 3. After two consecutive failures on the same tool, stop and explain the problem in text.
 4. Prefer specific, narrow operations over broad ones. Read 50 lines, not 2000. Search one directory, not the whole project.
 5. Always verify your changes: after edit, read the modified section to confirm correctness.
-6. Use explore_files for multi-file exploration instead of reading files one by one. It saves context.
-7. Use background_task for independent subtasks that can run in parallel.`
+6. explore_files BLOCKS until done — use it when you need results before proceeding.
+7. For parallel work, use background_task. It returns immediately so you can continue working.`
 }

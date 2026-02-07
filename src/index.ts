@@ -12,7 +12,7 @@
  */
 
 import type { Plugin } from "@opencode-ai/plugin"
-import { getToolGuide } from "./prompt/tool-guide.js"
+import { getToolGuide, getSubAgentToolGuide } from "./prompt/tool-guide.js"
 import { createToolOutputGuard } from "./hooks/tool-output-guard.js"
 import { createPostCompactionReinject } from "./hooks/post-compaction-reinject.js"
 import { SessionManager } from "./orchestration/session-manager.js"
@@ -33,9 +33,13 @@ const kiwi: Plugin = async (input) => {
 
   return {
     // Hook 1: Inject Qwen tool usage guide into system prompt
-    "experimental.chat.system.transform": async (_input, output) => {
+    // Sub-agent sessions get a reduced guide (only read/grep/glob/bash)
+    "experimental.chat.system.transform": async (hookInput, output) => {
       if (Array.isArray(output.system)) {
-        output.system.push(getToolGuide())
+        const guide = manager.isSubAgentSession(hookInput.sessionID)
+          ? getSubAgentToolGuide()
+          : getToolGuide()
+        output.system.push(guide)
       }
     },
 

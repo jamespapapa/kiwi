@@ -16,6 +16,7 @@
 declare var setTimeout: (cb: () => void, ms: number) => unknown
 declare var setInterval: (cb: () => void, ms: number) => unknown
 declare var clearInterval: (id: unknown) => void
+declare var clearTimeout: (id: unknown) => void
 declare var process: { on(event: string, cb: () => void): void } | undefined
 
 import type { createOpencodeClient } from "@opencode-ai/sdk"
@@ -78,6 +79,8 @@ let taskCounter = 0
 export class SessionManager {
   private tasks = new Map<string, BackgroundTask>()
   private completing = new Set<string>()
+  private subAgentSessions = new Set<string>()
+  private idleDeferralTimers = new Map<string, unknown>()
   private concurrency: ConcurrencyLimiter
   private config: OrchestrationConfig
   private pollTimer: unknown
@@ -152,9 +155,22 @@ export class SessionManager {
     const task = this.findBySessionID(sessionID)
     if (!task || task.status !== "running") return
 
-    // Enforce minimum runtime to avoid premature completion
-    if (task.startedAt && Date.now() - task.startedAt.getTime() < MIN_RUNTIME_MS) {
-      return
+    // If too early, defer the idle event with a timer (OMO pattern)
+    if (task.startedAt) {
+      const elapsed = Date.now() - task.startedAt.getTime()
+      if (elapsed < MIN_RUNTIME_MS) {
+        // Cancel any existing deferral timer for this task
+        const existing = this.idleDeferralTimers.get(task.id)
+        if (existing) clearTimeout(existing as any)
+
+        const remaining = MIN_RUNTIME_MS - elapsed + 500
+        const timer = setTimeout(() => {
+          this.idleDeferralTimers.delete(task.id)
+          this.tryComplete(task).catch(() => {})
+        }, remaining)
+        this.idleDeferralTimers.set(task.id, timer)
+        return
+      }
     }
 
     // Defer completion slightly to let final messages settle
@@ -179,8 +195,10 @@ export class SessionManager {
     task.status = "cancelled"
     task.completedAt = new Date()
     this.completing.delete(task.id)
+    this.clearIdleDeferral(task.id)
 
     if (task.sessionID) {
+      this.subAgentSessions.delete(task.sessionID)
       try {
         await this.client.session.abort({
           path: { id: task.sessionID },
@@ -193,6 +211,12 @@ export class SessionManager {
 
     this.concurrency.release()
     return true
+  }
+
+  /** Check if a sessionID belongs to a Kiwi sub-agent */
+  isSubAgentSession(sessionID: string | undefined): boolean {
+    if (!sessionID) return false
+    return this.subAgentSessions.has(sessionID)
   }
 
   /** Summary of running tasks for compaction context injection */
@@ -241,6 +265,7 @@ export class SessionManager {
     task.sessionID = (session as { id: string }).id
     task.status = "running"
     task.startedAt = new Date()
+    this.subAgentSessions.add(task.sessionID)
 
     // Fire async prompt (returns immediately)
     await this.client.session.promptAsync({
@@ -291,6 +316,8 @@ export class SessionManager {
       // Only release concurrency slot when task actually reached a terminal state
       if (task.status === "completed" || task.status === "error") {
         this.concurrency.release()
+        this.clearIdleDeferral(task.id)
+        if (task.sessionID) this.subAgentSessions.delete(task.sessionID)
       }
     }
   }
@@ -435,6 +462,14 @@ export class SessionManager {
     while (completed.length > MAX_COMPLETED_TASKS) {
       const [id] = completed.shift()!
       this.tasks.delete(id)
+    }
+  }
+
+  private clearIdleDeferral(taskId: string): void {
+    const timer = this.idleDeferralTimers.get(taskId)
+    if (timer) {
+      clearTimeout(timer as any)
+      this.idleDeferralTimers.delete(taskId)
     }
   }
 
