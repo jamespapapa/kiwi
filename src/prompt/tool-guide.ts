@@ -59,6 +59,21 @@ You have access to tools via function calling. You MUST call tools using the pro
 - Use for complex, independent subtasks that can run in parallel.
 - Provide a clear, self-contained prompt — the subagent has no access to your conversation context.
 
+### todowrite — Update the task list
+- Parameters: todos (required, array of todo objects)
+- Use to track multi-step tasks.
+
+### question — Ask the user a question
+- Parameters: question (required string)
+- Use when you need clarification, confirmation, or user input to proceed.
+
+### webfetch — Fetch web content
+- Parameters: url (required), format (optional: "text", "markdown", "html"), timeout (optional seconds)
+
+### skill — Execute a predefined skill
+- Parameters: skill (required string)
+- Use to invoke registered skills by name.
+
 ### General Rules
 1. One tool call at a time. Wait for the result before making the next call.
 2. If a tool call fails, read the error message carefully. Fix the issue and retry once.
