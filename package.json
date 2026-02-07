@@ -1,0 +1,19 @@
+{
+  "name": "kiwi-opencode-plugin",
+  "version": "0.1.0",
+  "description": "OpenCode plugin for Qwen tool call stabilization in air-gapped networks",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @opencode-ai/plugin --external @opencode-ai/sdk",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.1.53"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "author": "Minyoung Cho",
+  "license": "MIT"
+}
