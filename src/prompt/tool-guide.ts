@@ -7,7 +7,40 @@
  *
  * Available tools (from OpenCode runtime):
  *   bash, read, glob, grep, edit, write, task, webfetch, todowrite, question, skill
+ *   explore_files (Kiwi plugin)
  */
+
+/**
+ * Reduced tool guide for sub-agent sessions.
+ * Only covers the 4 tools sub-agents can actually use.
+ */
+export function getSubAgentToolGuide(): string {
+  return `## Tool Usage Rules (Sub-Agent)
+
+You MUST call tools using the proper function call mechanism. NEVER output tool calls as plain text.
+You can ONLY use these 4 tools. Do NOT attempt to call any other tool.
+
+### read — Read file contents
+- Parameters: filePath (required), offset (optional), limit (optional)
+- Use offset and limit for large files. Read only the lines you need.
+
+### grep — Search file contents with regex
+- Parameters: pattern (required regex), path (optional directory), include (optional file glob)
+- Always specify path and include to limit scope.
+
+### glob — Find files by name pattern
+- Parameters: pattern (required glob), path (optional directory)
+
+### bash — Execute read-only shell commands
+- Parameters: command (required), description (required)
+- ONLY for read-only commands: ls, wc, find, cat, head, tail.
+- NEVER run destructive or write commands.
+
+### Rules
+1. One tool call at a time. Wait for the result before the next call.
+2. Prefer narrow operations. Read 50 lines, not 2000.
+3. Return a concise structured summary with file paths and line numbers.`
+}
 
 export function getToolGuide(): string {
   return `## Tool Usage Rules (MANDATORY)
@@ -73,6 +106,13 @@ You have access to tools via function calling. You MUST call tools using the pro
 ### skill — Execute a predefined skill
 - Parameters: skill (required string)
 - Use to invoke registered skills by name.
+
+### explore_files — Analyze files (BLOCKING)
+- Parameters: paths (required, comma-separated file paths or directories), instruction (required)
+- This tool BLOCKS — it waits until analysis is done, then returns a summary.
+- Use when you need to understand code before editing. Much faster than reading files one by one.
+- The result is a concise summary with file paths and line numbers.
+- Example: paths="src/hooks,src/index.ts", instruction="Find where tool output is truncated"
 
 ### General Rules
 1. One tool call at a time. Wait for the result before making the next call.

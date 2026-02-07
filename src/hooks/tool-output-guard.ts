@@ -19,6 +19,7 @@ const TOOL_MAX_CHARS: Record<string, number> = {
   webfetch: 16_000,
   websearch: 16_000,
   codesearch: 16_000,
+  explore_files: 16_000,
 }
 
 /** Number of lines to preserve from the end for bash output */
