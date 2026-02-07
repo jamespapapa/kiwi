@@ -48,7 +48,7 @@ export function getToolGuide(): string {
 You are working in an air-gapped Windows environment with no internet access. Always respond in Korean.
 
 You have access to tools via function calling. You MUST call tools using the proper function call mechanism. NEVER output tool calls as plain text.
-Do NOT use google_search or webfetch — there is no internet connection.
+Do NOT use google_search — there is no internet connection. webfetch is available for intranet URLs.
 
 ### read — Read file contents
 - Parameters: filePath (required), offset (optional, 0-based line number), limit (optional, default 2000)
@@ -102,6 +102,10 @@ Do NOT use google_search or webfetch — there is no internet connection.
 ### question — Ask the user a question
 - Parameters: question (required string)
 - Use when you need clarification, confirmation, or user input to proceed.
+
+### webfetch — Fetch web content
+- Parameters: url (required), format (optional: "text", "markdown", "html"), timeout (optional seconds)
+- Only intranet URLs are accessible. External internet is blocked.
 
 ### skill — Execute a predefined skill
 - Parameters: skill (required string)
