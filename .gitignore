@@ -21,3 +21,9 @@ Thumbs.db
 node_modules/
 __pycache__/
 *.pyc
+
+# Reference repos
+.ref/
+
+# Build output
+dist/
