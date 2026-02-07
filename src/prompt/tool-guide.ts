@@ -4,6 +4,9 @@
  * This guide compensates for Qwen's inability to infer correct tool usage
  * from JSON Schema alone. Every rule here addresses a real failure pattern
  * observed during testing with qwen3-235b-a22b.
+ *
+ * Available tools (from OpenCode runtime):
+ *   bash, read, glob, grep, edit, write, task, webfetch, todowrite, question, skill
  */
 
 export function getToolGuide(): string {
@@ -51,23 +54,26 @@ You have access to tools via function calling. You MUST call tools using the pro
 - Example: pattern="*.ts", path="src/hooks"
 - Do NOT pass "undefined" or "null" as path. Omit it to use current directory.
 
-### list — List directory contents
-- Parameters: path (optional, absolute path), ignore (optional, glob patterns to ignore)
-- Use to explore directory structure.
+### task — Delegate work to a subagent
+- Parameters: description (required string), prompt (required string)
+- Use for complex, independent subtasks that can run in parallel.
+- Provide a clear, self-contained prompt — the subagent has no access to your conversation context.
 
 ### todowrite — Update the task list
 - Parameters: todos (required, array of todo objects)
 - Use to track multi-step tasks.
 
-### todoread — Read the task list
-- No parameters required.
+### question — Ask the user a question
+- Parameters: question (required string)
+- Use when you need clarification, confirmation, or user input to proceed.
+- Prefer this tool over plain text when a clear answer is needed before continuing work.
 
 ### webfetch — Fetch web content
 - Parameters: url (required), format (optional: "text", "markdown", "html"), timeout (optional seconds)
 
-### FORBIDDEN — Do NOT use these tools
-- task: You lack the ability to delegate to subagents reliably. Do all work yourself directly.
-- question: Do not call this tool. If you need to ask the user something, write your question as regular text output.
+### skill — Execute a predefined skill
+- Parameters: skill (required string)
+- Use to invoke registered skills by name.
 
 ### General Rules
 1. One tool call at a time. Wait for the result before making the next call.
