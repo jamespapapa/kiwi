@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="kiwi character">
+  <g fill="none" stroke="#050505" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M154 131c29-39 87-72 159-45 34 13 59 37 89 48 42 15 75 53 79 101 7 84-49 132-125 146-97 18-193-13-233-81-29-49-14-111 31-169Z" fill="#8bcf63" stroke-width="13"></path>
+    <path d="M74 183c-26 2-57 28-69 61-3 9 2 17 11 17 26-1 82-36 112-63 10-9 5-25-8-28-15-4-30 0-46 13Z" fill="#f0cc67" stroke-width="12"></path>
+    <path d="M205 374c11 22 12 47 0 67-9 2-19 10-27 17" stroke-width="12"></path>
+    <path d="M277 376c10 23 17 47 4 68-8 5-18 11-27 18" stroke-width="12"></path>
+    <path d="M207 441c-11 4-21 11-30 18" stroke-width="8"></path>
+    <path d="M282 444c-8 6-17 12-28 18" stroke-width="8"></path>
+  </g>
+  <g fill="#050505">
+    <ellipse cx="145" cy="157" rx="10" ry="13" transform="rotate(-5 145 157)"></ellipse>
+    <ellipse cx="206" cy="180" rx="9" ry="12" transform="rotate(8 206 180)"></ellipse>
+  </g>
+</svg>

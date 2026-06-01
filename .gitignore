@@ -1,0 +1,17 @@
+.next/
+node_modules/
+build/*
+build/offline/
+data/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+*.pyc
+*.sqlite3
+*.log
+tsconfig.tsbuildinfo
+.env
+.DS_Store
