@@ -1,0 +1,540 @@
+{
+  "schema_version": "fast-response-eval-results.v1",
+  "generated_at": "2026-06-09T04:03:17.142412+00:00",
+  "benchmark_schema_version": "fast-benchmark-results.v1",
+  "benchmark_task_count": 10,
+  "runner": {
+    "requested_runner": "mock",
+    "effective_runner": "mock",
+    "codex_checked": false,
+    "codex_available": false,
+    "codex_path": "",
+    "codex_model": "",
+    "codex_safety_args": [],
+    "unsupported_safety_args": [],
+    "codex_command_args": [],
+    "source_counts": {
+      "mock": 8,
+      "mock_intentionally_weak": 2
+    },
+    "fallback_events": [],
+    "fallback_to_mock": true,
+    "fallback_reason": "default mock/dry-run mode; no external model call attempted"
+  },
+  "rubric": {
+    "pass_threshold": 12,
+    "max_score": 14,
+    "criteria": {
+      "project_info_current_file_verification": {
+        "label": "Project Info 먼저 읽기/현재 파일 검증 언급",
+        "range": "0-2"
+      },
+      "todowrite_planning": {
+        "label": "todo_write 계획 사용",
+        "range": "0-2"
+      },
+      "short_korean_plan": {
+        "label": "짧은 한국어 계획",
+        "range": "0-2"
+      },
+      "minimal_scope": {
+        "label": "최소 수정 범위 유지",
+        "range": "0-2"
+      },
+      "focused_verification": {
+        "label": "focused verification 제시",
+        "range": "0-2"
+      },
+      "stop_question_conditions": {
+        "label": "stop/question 조건 인식",
+        "range": "0-2"
+      },
+      "forbidden_leakage_absent": {
+        "label": "FAST 금지어 누수 없음",
+        "range": "0-2"
+      }
+    }
+  },
+  "summary": {
+    "task_count": 10,
+    "passed": 8,
+    "failed": 2,
+    "intentionally_weak": 2
+  },
+  "tasks": [
+    {
+      "task_id": "front_claim_intro_text",
+      "profile": "dcp-front",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-front.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 front claim intro text 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. route/view/component/Vuex DataStore/Axios/CSS/Playwright 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "front_claim_intro_text follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "front_button_css_containment",
+      "profile": "dcp-front",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-front.md",
+      "response_source": "mock_intentionally_weak",
+      "response_sample": "바로 CSS를 크게 정리하겠습니다.\n전체 스타일을 훑어서 보기 좋게 바꾸고 결과만 알려드리겠습니다.\n검증은 나중에 화면을 보면 될 것 같습니다.",
+      "score": 4,
+      "max_score": 14,
+      "pass": false,
+      "failure_reasons": [
+        "project_info_current_file_verification: Does not mention Project Info or current file verification.",
+        "todowrite_planning: Does not use `todo_write` tool for planning.",
+        "short_korean_plan: Korean response exists but plan is weak.",
+        "minimal_scope: Does not preserve minimal scope.",
+        "focused_verification: Mentions verification but not focused enough.",
+        "stop_question_conditions: No stop/question condition recognition."
+      ],
+      "evaluator_notes": "front_button_css_containment fails FAST response quality on: project_info_current_file_verification, todowrite_planning, short_korean_plan, minimal_scope, focused_verification, stop_question_conditions.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 0,
+          "notes": "Does not mention Project Info or current file verification."
+        },
+        "todowrite_planning": {
+          "score": 0,
+          "notes": "Does not use `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 1,
+          "notes": "Korean response exists but plan is weak."
+        },
+        "minimal_scope": {
+          "score": 0,
+          "notes": "Does not preserve minimal scope."
+        },
+        "focused_verification": {
+          "score": 1,
+          "notes": "Mentions verification but not focused enough."
+        },
+        "stop_question_conditions": {
+          "score": 0,
+          "notes": "No stop/question condition recognition."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "front_datastore_payload_trace",
+      "profile": "dcp-front",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-front.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 front datastore payload trace 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. route/view/component/Vuex DataStore/Axios/CSS/Playwright 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "front_datastore_payload_trace follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "front_playwright_route_smoke",
+      "profile": "dcp-front",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-front.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 front playwright route smoke 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. route/view/component/Vuex DataStore/Axios/CSS/Playwright 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "front_playwright_route_smoke follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "services_mybatis_condition",
+      "profile": "dcp-services",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-services.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 services mybatis condition 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. controller/service/repository/MyBatis/EAI/resources-env/profile/verification 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "services_mybatis_condition follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "services_eai_parameter_trace",
+      "profile": "dcp-services",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-services.md",
+      "response_source": "mock_intentionally_weak",
+      "response_sample": "계획: Project Info를 보고 현재 파일을 확인한 뒤 처리합니다.\n이 작업은 subagent에게 넘겨서 EAI payload를 고치게 하고 task_size를 medium으로 보겠습니다.\n최소 수정 후 focused verification을 실행하고, 불명확하면 질문하겠습니다.",
+      "score": 9,
+      "max_score": 14,
+      "pass": false,
+      "failure_reasons": [
+        "todowrite_planning: Does not use `todo_write` tool for planning.",
+        "minimal_scope: Mentions narrow scope but lacks full minimal-diff discipline.",
+        "forbidden_leakage_absent: Forbidden leakage detected: task_size, subagent"
+      ],
+      "evaluator_notes": "services_eai_parameter_trace fails FAST response quality on: todowrite_planning, minimal_scope, forbidden_leakage_absent.",
+      "forbidden_leakage": {
+        "passed": false,
+        "hits": [
+          "task_size",
+          "subagent"
+        ]
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 0,
+          "notes": "Does not use `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 1,
+          "notes": "Mentions narrow scope but lacks full minimal-diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 0,
+          "notes": "Forbidden leakage detected: task_size, subagent"
+        }
+      }
+    },
+    {
+      "task_id": "services_resources_env_profile",
+      "profile": "dcp-services",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-services.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 services resources env profile 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. controller/service/repository/MyBatis/EAI/resources-env/profile/verification 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "services_resources_env_profile follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "services_controller_validation",
+      "profile": "dcp-services",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.dcp-services.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 services controller validation 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. controller/service/repository/MyBatis/EAI/resources-env/profile/verification 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "services_controller_validation follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "generic_readme_script_alignment",
+      "profile": "generic",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.generic.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 generic readme script alignment 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. entrypoint/module/config/data/tests/scripts 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "generic_readme_script_alignment follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    },
+    {
+      "task_id": "generic_config_test_surface",
+      "profile": "generic",
+      "prompt_source": "docs/fast-system-prompts/fast-system-prompt.generic.md",
+      "response_source": "mock",
+      "response_sample": "계획: `todo_write` tool로 generic config test surface 작업 순서와 완료 조건을 먼저 기록하겠습니다.\n1. Project Info Layer 요약을 읽고 현재 파일로 검증하겠습니다.\n2. entrypoint/module/config/data/tests/scripts 관련 파일만 확인해 근거를 잡겠습니다.\n3. 확인된 gap이 있을 때만 최소 수정 범위를 유지해 작은 diff로 반영하겠습니다.\n4. focused verification 명령 또는 실행 불가 시 대체 확인을 기록하겠습니다.\n중단/질문 조건: 소유 파일, 업무 의미, payload/config, 검증 범위가 불명확하면 편집하지 않고 질문하겠습니다.",
+      "score": 14,
+      "max_score": 14,
+      "pass": true,
+      "failure_reasons": [],
+      "evaluator_notes": "generic_config_test_surface follows FAST response principles under the closed-network Qwen3.5 rubric.",
+      "forbidden_leakage": {
+        "passed": true,
+        "hits": []
+      },
+      "rubric": {
+        "project_info_current_file_verification": {
+          "score": 2,
+          "notes": "Mentions Project Info first context and current file verification."
+        },
+        "todowrite_planning": {
+          "score": 2,
+          "notes": "Uses `todo_write` tool for planning."
+        },
+        "short_korean_plan": {
+          "score": 2,
+          "notes": "Includes a concise Korean plan."
+        },
+        "minimal_scope": {
+          "score": 2,
+          "notes": "Keeps minimal scope and small diff discipline."
+        },
+        "focused_verification": {
+          "score": 2,
+          "notes": "Presents focused verification with command or fallback expectation."
+        },
+        "stop_question_conditions": {
+          "score": 2,
+          "notes": "Recognizes stop/question conditions."
+        },
+        "forbidden_leakage_absent": {
+          "score": 2,
+          "notes": "No FAST forbidden leakage detected."
+        }
+      }
+    }
+  ]
+}

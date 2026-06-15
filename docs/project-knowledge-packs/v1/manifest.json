@@ -1,0 +1,30 @@
+{
+  "version": "v1",
+  "generated_by": "scripts/generate-project-knowledge-packs.py",
+  "profiles": [
+    "dcp-front",
+    "dcp-services",
+    "drt-api",
+    "drt-cms",
+    "drt-front"
+  ],
+  "document_files": [
+    "00-index.md",
+    "01-repository-map.md",
+    "02-build-and-runtime.md",
+    "03-system-boundaries.md",
+    "04-domain-glossary.md",
+    "05-api-and-contracts.md",
+    "06-data-model.md",
+    "06-frontend-css-and-dom.md",
+    "07-state-and-data-propagation.md",
+    "08-integrations.md",
+    "09-security-auth-privacy.md",
+    "10-testing-and-quality.md",
+    "11-operations-and-deployment.md",
+    "12-change-playbooks.md",
+    "99-gaps-and-questions.md",
+    "_worklog.md"
+  ],
+  "zip_layout": "extract project-knowledge-packs.zip directly under D:/aiops/docs"
+}

@@ -1,0 +1,90 @@
+[
+  {
+    "prompt": "brainstorm a feature before coding",
+    "expected_skills": ["brainstorming"]
+  },
+  {
+    "prompt": "let's brainstorm alternatives",
+    "expected_skills": ["brainstorming"]
+  },
+  {
+    "prompt": "write a plan for this migration",
+    "expected_skills": ["writing-plans"]
+  },
+  {
+    "prompt": "create implementation plan",
+    "expected_skills": ["writing-plans"]
+  },
+  {
+    "prompt": "execute the approved plan",
+    "expected_skills": ["executing-plans"]
+  },
+  {
+    "prompt": "follow the plan step by step",
+    "expected_skills": ["executing-plans"]
+  },
+  {
+    "prompt": "add behavior with a failing test first",
+    "expected_skills": ["test-driven-development"]
+  },
+  {
+    "prompt": "write a failing test for the regression",
+    "expected_skills": ["test-driven-development"]
+  },
+  {
+    "prompt": "debug this failing test",
+    "expected_skills": ["systematic-debugging", "test-driven-development"]
+  },
+  {
+    "prompt": "investigate root cause before fixing",
+    "expected_skills": ["systematic-debugging"]
+  },
+  {
+    "prompt": "verify before done",
+    "expected_skills": ["verification-before-completion"]
+  },
+  {
+    "prompt": "prove completion with verification",
+    "expected_skills": ["verification-before-completion"]
+  },
+  {
+    "prompt": "request code review",
+    "expected_skills": ["requesting-code-review"]
+  },
+  {
+    "prompt": "get a reviewer for this diff",
+    "expected_skills": ["requesting-code-review"]
+  },
+  {
+    "prompt": "handle the review comments",
+    "expected_skills": ["receiving-code-review"]
+  },
+  {
+    "prompt": "receive code review and fix findings",
+    "expected_skills": ["receiving-code-review"]
+  },
+  {
+    "prompt": "split into agents",
+    "expected_skills": ["subagent-driven-development", "dispatching-parallel-agents"]
+  },
+  {
+    "prompt": "dispatch parallel agents for independent files",
+    "expected_skills": ["dispatching-parallel-agents"]
+  },
+  {
+    "prompt": "use subagents for implementation",
+    "expected_skills": ["subagent-driven-development"]
+  },
+  {
+    "prompt": "finish this development branch",
+    "expected_skills": ["finishing-a-development-branch"]
+  },
+  {
+    "prompt": "use git worktrees for parallel implementation",
+    "expected_skills": ["using-git-worktrees"]
+  },
+  {
+    "prompt": "activate superpowers skill-first",
+    "expected_skills": ["using-superpowers"]
+  }
+]
